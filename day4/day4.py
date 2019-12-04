@@ -11,15 +11,13 @@ def main():
                 break
         else:
             i = i[:-1] + str(int(i[-1]) + 1)
-        adj = 0
         j = 0
-        while adj == 0 and j < 5:
+        while j < 5:
             same = 1
             while j <= 4 and i[j] == i[j+1]:
                 same += 1
                 j += 1
             if same == 2:
-                adj += 1
                 count += 1
                 print(i)
                 break
