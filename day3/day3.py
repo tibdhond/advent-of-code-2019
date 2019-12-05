@@ -6,7 +6,7 @@ def main():
     grid = {}
     shortest = math.inf
     instrmap = {"L": (-1, 0), "R": (1, 0), "U": (0, -1), "D": (0, 1)}
-    with open("input.txtg") as f:
+    with open("input.txt") as f:
         for building in [True, False]:
             inp = f.readline().split(",")
             coordinates = (0, 0)
