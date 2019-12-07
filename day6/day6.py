@@ -12,7 +12,7 @@ class Satellite:
 
 def main():
     satellite_map = {"COM": Satellite("COM")}
-    with open("input.txt", 'r') as f:
+    with open("test.txt", 'r') as f:
         lines = f.readlines()
         for line in lines:
             satellites = line.strip().split(")")
@@ -32,18 +32,32 @@ def main():
 
             parent.orbits.append(sat)
 
-    total = 0
-    for satellite in satellite_map.values():
-        next_sat = satellite.parent
-        while next_sat is not None and next_sat.parent is not None:
-            satellite.id_orbits += 1
-            next_sat = next_sat.parent
-            # print(next_sat)
-        total += satellite.id_orbits + len(satellite.orbits)
-        print(satellite)
+    sat = satellite_map["YOU"].parent
+    you_parents = []
+    while sat is not None:
+        you_parents.append(sat.name)
+        sat = sat.parent
 
-    COM = satellite_map["COM"]
-    print(total)
+    sat = satellite_map["SAN"].parent
+    i = 1
+    while sat.name not in you_parents:
+        sat = sat.parent
+        i += 1
+    print(sat, i + len(you_parents[:you_parents.index(sat.name)]) - 1)
+
+    # part 1
+    # total = 0
+    # for satellite in satellite_map.values():
+    #     next_sat = satellite.parent
+    #     while next_sat is not None and next_sat.parent is not None:
+    #         satellite.id_orbits += 1
+    #         next_sat = next_sat.parent
+    #         print(next_sat)
+        # total += satellite.id_orbits + len(satellite.orbits)
+        # print(satellite)
+    #
+    # COM = satellite_map["COM"]
+    # print(total)
 
 
 if __name__ == '__main__':
