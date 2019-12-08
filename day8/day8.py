@@ -1,50 +1,60 @@
-import math
+from tkinter import *
 
 
 class Layer:
     def __init__(self):
         self.grid = [[str(0) for _ in range(25)] for _ in range(6)]
-        self.zeros = 0
-        self.ones = 0
-        self.twos = 0
 
     def __str__(self):
         str_grid = [" ".join(x) for x in self.grid]
-        return "Layer(%d, %d, %d)\n%s" % (self.zeros, self.ones, self.twos, "\n".join(str_grid))
+        return "%s" % ("\n".join(str_grid))
 
 
 def main():
     with open("input.txt", 'r') as f:
         inpt = f.readline()
         layer = Layer()
-        layer_id = 0
-        best_zeros = math.inf
-        best_result = 0
+        layers = []
         x = 0
         y = 0
 
         for pixel in inpt:
-            if pixel == "0":
-                layer.zeros += 1
-            elif pixel == "1":
-                layer.ones += 1
-            elif pixel == "2":
-                layer.twos += 1
             layer.grid[x][y] = pixel
             y += 1
             if y == 25:
                 y = 0
                 x += 1
                 if x == 6:
-                    if layer.zeros < best_zeros:
-                        best_result = layer.ones * layer.twos
-                        best_zeros = layer.zeros
-                    print(layer)
+                    layers.append(layer)
                     layer = Layer()
-                    layer_id += 1
                     x = 0
                     y = 0
-    print(best_result)
+
+    final = Layer()
+    layer_id = 0
+    master = Tk()
+    canvas_width = 25*10
+    canvas_height = 6*10
+    w = Canvas(master,
+               width=canvas_width,
+               height=canvas_height)
+    w.pack()
+    for row in range(6):
+        for column in range(25):
+
+            while layers[layer_id].grid[row][column] == "2":
+                layer_id += 1
+
+            final.grid[row][column] = layers[layer_id].grid[row][column]
+            if final.grid[row][column] == "0":
+                w.create_rectangle(column*10, row*10, column * 10+9, row * 10+9, fill="#000000")
+            else:
+                w.create_rectangle(column*10, row*10, column * 10+9, row * 10+9, fill="#ffffff")
+
+            layer_id = 0
+
+    print(final)
+    master.mainloop()
 
 
 if __name__ == '__main__':
