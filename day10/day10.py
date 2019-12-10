@@ -71,7 +71,7 @@ def main():
 
 
 def part2():
-    with open("test.txt", 'r') as f:
+    with open("input.txt", 'r') as f:
         inpt = [list(line.strip()) for line in f.readlines()]
         start = (17, 14)
         # start = (3, 8)
