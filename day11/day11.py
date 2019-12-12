@@ -117,7 +117,7 @@ def main():
             "07": less_than, "08": equals, "09": change_base}
 
     direction_map = [(0, 1), (1, 0), (0, -1), (-1, 0)]
-    location_map = {(0, 0): 2}
+    location_map = {(0, 0): 0}
 
     width = 100
     height = 100
