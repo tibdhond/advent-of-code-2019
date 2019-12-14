@@ -1,3 +1,6 @@
+import math
+
+
 def part1(file):
     with open(file, 'r') as f:
         requirements = {}
@@ -15,26 +18,33 @@ def part1(file):
             leftovers[result[1]] = 0
             inpt = f.readline()
 
+        ore = 1000000000000
+        fuel = 0
+        fuel_check = ore // 10
         chemical = requirements["FUEL"]
-        result = get_requirements(requirements, leftovers, chemical, 1, "FUEL")
-        print(leftovers)
-        print([(key, value) for key, value in leftovers.items() if value > 0])
-        for key, value in leftovers.items():
-            if value >= int(requirements[key]["amount"]):
-                print(key, value)
 
-        return result
+        while ore > 0:
+            result = get_requirements(requirements, leftovers, chemical, fuel_check, "FUEL")
+
+            if fuel_check == 1 and ore - result < 0:
+                break
+
+            if ore - result > 0:
+                ore -= result
+                fuel += fuel_check
+            else:
+                fuel_check = fuel_check // 10
+
+        return fuel
 
 
 def get_requirements(requirements, leftovers, chemical, needed, name):
     ore = 0
-    multiplier = 1
     new_leftovers = leftovers[name] - needed
     needed = max(0, needed - leftovers[name])
     leftovers[name] = max(0, new_leftovers)
     if needed > 0:
-        while int(chemical["amount"]) * multiplier < needed:
-            multiplier += 1
+        multiplier = int(math.ceil(needed / int(chemical["amount"])))
 
         leftovers[name] += int(chemical["amount"]) * multiplier - needed
 
@@ -45,8 +55,6 @@ def get_requirements(requirements, leftovers, chemical, needed, name):
                 next_chem = requirements[requirement[1]]
                 ore += get_requirements(requirements, leftovers, next_chem,
                                         int(requirement[0]) * multiplier, requirement[1])
-    else:
-        print("No extra %s needed: %d" % (name, needed))
     return ore
 
 
