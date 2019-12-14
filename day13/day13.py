@@ -196,7 +196,7 @@ def main():
                 joystick = 1
             stdin.append(joystick)
 
-        frames[0].save('breakout.gif', format='GIF', append_images=frames[1:], save_all=True, duration=10, loop=0)
+        frames[0].save('breakout.gif', format='GIF', append_images=frames[1:], save_all=True, duration=1, loop=0)
         print(blocks)
         print(score)
 
