@@ -1,10 +1,15 @@
 import re
 import math
 import matplotlib.pyplot as plt
+from PIL import Image
+import imageio
 
 
 # def step(moons, state):
 def step(moons):
+    height = 2000
+    width = 6000
+    image = Image.new("RGB", (width, height))
     for i in range(len(moons)):
         for j in range(i+1, len(moons)):
             moon1 = moons[i]
@@ -21,24 +26,45 @@ def step(moons):
 
     for moon in moons:
         moon[0] = [x + y for x, y in zip(moon[0], moon[1])]
+        column = moon[0][0]
+        row = moon[0][1]
+        for x in range(column*10, column*10+10):
+            for y in range(row*10, row*10+10):
+                image.putpixel(((width // 2) - (width // 3) + x, height // 2 + y), (255, 255, 255))
+
+        column = moon[0][0]
+        row = moon[0][2]
+        for x in range(column * 10, column * 10 + 10):
+            for y in range(row * 10, row * 10 + 10):
+                image.putpixel((width // 2 + x, height // 2 + y), (255, 255, 255))
+
+        column = moon[0][1]
+        row = moon[0][2]
+        for x in range(column * 10, column * 10 + 10):
+            for y in range(row * 10, row * 10 + 10):
+                image.putpixel(((width // 2) + (width // 3) + x, height // 2 + y), (255, 255, 255))
+
+    return image
 
     # state.append([moons[0][0][0], moons[0][0][1], moons[0][0][2]])
 
 
 def part1():
     with open("input.txt", 'r') as f:
-        inpt = f.readlines()
-        moons = [[[int(x) for x in re.sub("[xyz<>=]", "", line.strip()).split(",")], [0, 0, 0]] for line in inpt]
+        with imageio.get_writer("simulation.gif", mode='I') as writer:
+            inpt = f.readlines()
+            moons = [[[int(x) for x in re.sub("[xyz<>=]", "", line.strip()).split(",")], [0, 0, 0]] for line in inpt]
 
-        # print("Step 0: %s" % moons)
-        # states = [[moons[0][0][0], moons[0][0][1], moons[0][0][2]]]
-        for i in range(1000):
-            # step(moons, states)
-            step(moons)
-            # print("Step %d: %s" % (i+1, moons))
+            frames = 1
+            for i in range(1000):
+                print("Frame %d" % i)
+                step(moons).save("frame.jpeg", format="jpeg")
+                writer.append_data(imageio.imread("frame.jpeg"))
 
-        print(sum([sum([abs(x) for x in moon[0]]) * sum([abs(x) for x in moon[1]]) for moon in moons]))
+                # print("Step %d: %s" % (i+1, moons))
 
+            print(sum([sum([abs(x) for x in moon[0]]) * sum([abs(x) for x in moon[1]]) for moon in moons]))
+        print("Gif saved")
         # plt.plot(states)
         # plt.show()
 
