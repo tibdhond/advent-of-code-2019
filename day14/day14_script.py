@@ -59,7 +59,7 @@ def get_requirements(requirements, leftovers, chemical, needed, name):
 
 
 def main():
-    print(part1("input.txt"))
+    print(part1("test3.txt"))
 
 
 if __name__ == '__main__':
