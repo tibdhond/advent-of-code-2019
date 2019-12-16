@@ -136,6 +136,15 @@ def paint_location(x, y, width, height, canvas):
     return canvas
 
 
+def paint_air(x, y, width, height, canvas):
+    x = width // 2 + x * 10
+    y = height // 2 + y * 10
+    for i in range(x, x + 9):
+        for j in range(y, y + 9):
+            canvas.putpixel((i, j), (0, 255, 0))
+    return canvas
+
+
 def main():
     global stdin
     global stdout
@@ -156,20 +165,16 @@ def main():
     direction_map = [(-1, 0), (0, 1), (1, 0), (0, -1)]
     direction_to_code = ["1", "4", "2", "3"]
 
-    status = 0
+    air_location = (0, 0)
 
     try:
         with open("input.txt") as f:
             inp = f.read().split(",")
-            while status != "2":
+            while len(last_directions) > 0:
                 stdin.append(direction_to_code[direction])
                 execute(fmap, inp, index, base)
                 status = stdout.pop(0)
-                if status == "2":
-                    break
-                elif status == "0":
-                    surroundings[location][direction] = "#"
-                else:
+                if status != "0":
                     surroundings[location][direction] = "."
                     canvas = paint_empty(location[1], location[0], width, height, frames[-1].copy())
                     location = tuple(map(operator.add, location, direction_map[direction]))
@@ -178,17 +183,44 @@ def main():
                         last_directions.append((direction + 2) % 4)
                     surroundings[location][(direction + 2) % 4] = "."
                     frames.append(paint_location(location[1], location[0], width, height, canvas))
+
+                    if status == "2":
+                        print("Target found! Took %d steps" % len(last_directions))
+                        air_location = location
+                elif status == "0":
+                    surroundings[location][direction] = "#"
                 if "" in surroundings[location]:
                     direction = (direction + 1) % 4
                     while surroundings[location][direction] != "":
                         direction = (direction + 1) % 4
                 else:
                     direction = last_directions.pop(-1)
-    except IndexError:
+            print(air_location)
+            fill_air = [(0, air_location)]
+            minutes = 0
+            while len(fill_air) > 0:
+                minutes += 1
+                canvas = frames[-1].copy()
+                print(minutes)
+                while fill_air[0][0] != minutes:
+                    cell = fill_air.pop(0)[1]
+                    print("Painting (%d, %d)" % (cell[0], cell[1]))
+                    paint_air(cell[1], cell[0], width, height, canvas)
+                    for direction, value in enumerate(surroundings[cell]):
+                        if value == ".":
+                            next_cell = tuple(map(operator.add, cell, direction_map[direction]))
+                            if next_cell in surroundings:
+                                fill_air.append((minutes, next_cell))
+                    del surroundings[cell]
+                    if len(fill_air) == 0:
+                        break
+                frames.append(canvas)
+            print("Restoring air took %d minutes" % (minutes-1))
+
+    except Exception as e:
         print("Something went wrong")
-        print(last_directions)
+        print(e)
     finally:
-        print("Target found! Took %d steps" % len(last_directions))
         print("Saving gif: %d frames" % len(frames))
         frames[0].save('breakout.gif', format='GIF', append_images=frames[1:], save_all=True, duration=1, loop=0)
         print("Gif saved!")
