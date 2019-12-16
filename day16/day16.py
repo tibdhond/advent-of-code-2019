@@ -1,7 +1,4 @@
-import math
-
-
-def main():
+def part1():
     with open("input.txt", 'r') as f:
         inpt = [int(x) for x in f.readline()]
         pattern = [0, 1, 0, -1]
@@ -23,6 +20,30 @@ def main():
             inpt = [x for x in new_inp]
         print(inpt)
         print("".join([str(x) for x in inpt[:8]]))
+
+
+def part2():
+    with open("input.txt", 'r') as f:
+        inpt = [int(x) for x in f.readline()]
+        message_index = int("".join([str(x) for x in inpt[:7]]))
+        inpt = inpt * 10000
+        inpt = inpt[message_index:]
+
+        for i in range(100):
+            print("Phase %d" % i)
+            new_input = [sum(inpt)]
+            el = 1
+            while el < len(inpt):
+                new_input.append(new_input[-1]-inpt[el-1])
+                el += 1
+            inpt = [int(str(x)[-1]) for x in new_input]
+
+        print(int("".join([str(x) for x in inpt[:8]])))
+
+
+def main():
+    # part1()
+    part2()
 
 
 if __name__ == '__main__':
